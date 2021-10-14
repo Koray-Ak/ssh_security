@@ -23,7 +23,7 @@ else
 	echo "AllowTcpForwarding no already updated"
  fi
 
-Compression="$(cat $ssh_directory | grep '^#'Compression[[:space:]]delayed)"
+Compression="$(cat $ssh_directory | grep '^#'Compression[[:space:]]delayed)" #
 
 
 if [ "$Compression" == "#Compression delayed" ];
