@@ -10,17 +10,40 @@ then
   exit $E_NOTROOT
 fi
 
+
 ssh_directory="/etc/ssh/sshd_config"
 AllowTcpForwarding="$(cat $ssh_directory | grep '^#'AllowTcpForwarding[[:space:]]yes)" # #AllowTcpForwarding yes seklinde olanlari gösterir.
 #ClientAliveCountMax=$"(cat $ssh_directory | grep '^#'ClientAliveCountMax)"
 
-if [ "$AllowTcpForwarding" == "#AllowTcpForwarding yes" ];
+ if [ "$AllowTcpForwarding" == "#AllowTcpForwarding yes" ];
 then
-sed -i s/#AllowTcpForwarding\ yes/AllowTcpForwarding\ no/g $ssh_directory
-echo "$AllowTcpForwarding has been changed AllowTcpForwarding no"
+	sed -i s/#AllowTcpForwarding\ yes/AllowTcpForwarding\ no/g $ssh_directory
+	echo "$AllowTcpForwarding has been changed AllowTcpForwarding no"
 else
-echo "AllowTcpForwarding no already updated"
+	echo "AllowTcpForwarding no already updated"
+ fi
+
+Compression="$(cat $ssh_directory | grep '^#'Compression[[:space:]]delayed)"
+
+
+if [ "$Compression" == "#Compression delayed" ];
+then
+sed -i s/#Compression\ delayed/Compression\ no/g $ssh_directory
+echo "$Compression has been changed Compression no"
+else
+echo "Compression no already updated"
 fi
+
+
+
+
+
+
+
+
+
+
+
 
 
 #if [ "$ClientAliveCountMax" == "#ClientAliveCountMax" ];
