@@ -12,11 +12,20 @@ fi
 
 ssh_directory="/etc/ssh/sshd_config"
 
-read -p "Change the default SSH port22: " SSH_PORT
+default_ssh_port="$(cat $ssh_directory | grep -m 1 Port)"
+
+read -p "Server SSH $default_ssh_port. Do you want to changed SSH Port? [y/n]: " answer
+
+if [[ "$answer" = y  ||  "$answer" = Y ]]; then
+
+read -p "Change the default SSH $default_ssh_port: " SSH_PORT
+
         sed -i \
         -e "s|#Port 22|Port ${SSH_PORT}|g" \
+        -e "s|${default_ssh_port}|Port ${SSH_PORT}|g" \
         -e "s|#ClientAliveCountMax 3|ClientAliveCountMax 2|g" \
         -e "s|#PermitRootLogin prohibit-password|PermitRootLogin no|g" \
+        -e "s|PermitRootLogin yes|PermitRootLogin no|g" \
 	-e "s|#AllowTcpForwarding yes|AllowTcpForwarding no|g" \
 	-e "s|#Compression delayed|Compression no|g" \
 	-e "s|#LogLevel INFO|LogLevel VERBOSE|g" \
@@ -27,19 +36,11 @@ read -p "Change the default SSH port22: " SSH_PORT
 	-e "s|#AllowAgentForwarding yes|AllowAgentForwarding no|g" \
 	-e "s|#LoginGraceTime 2m|LoginGraceTime 1m|g" \
         $ssh_directory
-        echo "#Port 22 has been changed $SSH_PORT"
-        echo "#ClientAliveCountMax 3 has been changed ClientAliveCountMax 2"
-        echo "#PermitRootLogin prohibit-password has been changed PermitRootLogin no"
-	echo "#AllowTcpForwarding yes has been changed AllowTcpForwarding no"
-	echo "#Compression delayed has been changed Compression no"
-	echo "#LogLevel INFO has been changed LogLevel VERBOSE"
-	echo "#MaxAuthTries 6 has been changed MaxAuthTries 2"
-	echo "#MaxSessions 10 has been changed MaxSessions 2"
-	echo "#TCPKeepAlive yes has been changed TCPKeepAlive no"
-	echo "X11Forwarding yes has been changed X11Forwarding no"
-	echo "#AllowAgentForwarding yes has been changed AllowAgentForwarding no"
-	echo "#LoginGraceTime 2m has been changed LoginGraceTime 1m"
         systemctl reload ssh
+else
+ exit 1;
+fi
+
 
 #This option is not mandatory,if you want to prevent from restrict number of sessions via SSH connections, you can use.
 #etc_security_path="/etc/security/limits.conf"
